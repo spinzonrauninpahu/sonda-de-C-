@@ -11,9 +11,8 @@ public class Order
     public int Quantity;
     public decimal UnitPrice;
 
-    public void CalculateTotalAndLog()
+    public decimal CalculateTotal()
     {
-        var total = Quantity * UnitPrice; 
-        Infrastructure.Logging.Logger.Log("Total (maybe): " + total);
+        return Quantity * UnitPrice;
     }
 }

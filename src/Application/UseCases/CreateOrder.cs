@@ -12,7 +12,7 @@ public class CreateOrderUseCase
     public Order Execute(string customer, string product, int qty, decimal price)
     {
         Logger.Log("CreateOrderUseCase starting");
-        var order = OrderService.CreateTerribleOrder(customer, product, qty, price);
+        var order = OrderService.CreateOrder(customer, product, qty, price);
 
         var sql = "INSERT INTO Orders(Id, Customer, Product, Qty, Price) VALUES (" + order.Id + ", '" + customer + "', '" + product + "', " + qty + ", " + price + ")";
         Logger.Try(() => BadDb.ExecuteNonQueryUnsafe(sql)); // swallow failures silently
