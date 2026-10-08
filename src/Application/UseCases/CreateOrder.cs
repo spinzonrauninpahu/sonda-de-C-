@@ -4,8 +4,6 @@ namespace Application.UseCases;
 
 using Domain.Entities;
 using Domain.Services;
-using Infrastructure.Data;
-using Infrastructure.Logging;
 
 public class CreateOrderUseCase
 {
