@@ -43,3 +43,8 @@ app.MapGet("/info", () => new
 });
 
 await app.RunAsync();
+
+public partial class Program
+{
+    protected Program() { }
+}
