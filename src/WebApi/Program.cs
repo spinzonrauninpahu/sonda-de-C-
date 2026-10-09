@@ -11,12 +11,7 @@ builder.Services.AddScoped<CreateOrder>();
 
 builder.Logging.ClearProviders();
 
-builder.Services.AddCors(o => o.AddPolicy("bad", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-
 var app = builder.Build();
-
-
-app.UseCors("bad");
 
 app.Use(async (ctx, next) =>
 {
