@@ -25,10 +25,10 @@ app.MapPost("/orders", (HttpContext http, CreateOrder uc) =>
     using var reader = new StreamReader(http.Request.Body);
     var body = reader.ReadToEnd();
     var parts = (body ?? "").Split(',');
-    var customer = parts.Length > 0 ? parts[0] : "anon";
-    var product = parts.Length > 1 ? parts[1] : "unknown";
-    var qty = parts.Length > 2 ? int.Parse(parts[2]) : 1;
-    var price = parts.Length > 3 ? decimal.Parse(parts[3]) : 0.99m;
+    var customer = parts.Length > 0 && !string.IsNullOrWhiteSpace(parts[0]) ? parts[0] : "anon";
+    var product = parts.Length > 1 && !string.IsNullOrWhiteSpace(parts[1]) ? parts[1] : "unknown";
+    var qty = parts.Length > 2 && !string.IsNullOrWhiteSpace(parts[2]) ? int.Parse(parts[2]) : 1;
+    var price = parts.Length > 3 && !string.IsNullOrWhiteSpace(parts[3]) ? decimal.Parse(parts[3]) : 0.99m;
 
     var order = uc.Execute(customer, product, qty, price);
 

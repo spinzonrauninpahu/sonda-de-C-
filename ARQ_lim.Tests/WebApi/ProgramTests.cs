@@ -100,6 +100,38 @@ public class ProgramTests : IClassFixture<WebApplicationFactory<Program>>
             json.RootElement.GetProperty("quantity").GetInt32());
     }
 
+    [Fact]
+    public async Task CreateOrder_EmptyBody_UsesDefaultValues()
+    {
+        using var content = new StringContent(
+            "",
+            Encoding.UTF8,
+            "text/plain");
+
+        var response = await _client.PostAsync("/orders", content);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var json = JsonDocument.Parse(
+            await response.Content.ReadAsStringAsync());
+
+        Assert.Equal(
+            "anon",
+            json.RootElement.GetProperty("customerName").GetString());
+
+        Assert.Equal(
+            "unknown",
+            json.RootElement.GetProperty("productName").GetString());
+
+        Assert.Equal(
+            1,
+            json.RootElement.GetProperty("quantity").GetInt32());
+
+        Assert.Equal(
+            0.99m,
+            json.RootElement.GetProperty("unitPrice").GetDecimal());
+    }
+
     private sealed class FakeOrderRepository : IOrderRepository
     {
         public void Create(Order order)
