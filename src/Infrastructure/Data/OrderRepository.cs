@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Application.Interfaces;
 using Domain.Entities;
-
+using Infrastructure.Database;
 
 namespace Infrastructure.Data
 {
     public class OrderRepository : IOrderRepository
     {
         private readonly string _connectionString;
+        private readonly ISqlExecutor _sqlExecutor;
 
-        public OrderRepository(string connectionString)
+        public OrderRepository(string connectionString) : this(connectionString, new SqlExecutor()) { }
+
+        public OrderRepository(string connectionString, ISqlExecutor sqlExecutor)
         {
             _connectionString = connectionString;
+            _sqlExecutor = sqlExecutor;
         }
 
         public void Create(Order order)
@@ -26,17 +25,16 @@ namespace Infrastructure.Data
             VALUES (@Id, @Customer, @Product, @Qty, @Price)
             """;
 
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand(sql, conn);
+            SqlParameter[] parameters =
+            [
+                new("@Id", order.Id),
+                new("@Customer", order.CustomerName),
+                new("@Product", order.ProductName),
+                new("@Qty", order.Quantity),
+                new("@Price", order.UnitPrice)
+            ];
 
-            cmd.Parameters.AddWithValue("@Id", order.Id);
-            cmd.Parameters.AddWithValue("@Customer", order.CustomerName);
-            cmd.Parameters.AddWithValue("@Product", order.ProductName);
-            cmd.Parameters.AddWithValue("@Qty", order.Quantity);
-            cmd.Parameters.AddWithValue("@Price", order.UnitPrice);
-
-            conn.Open();
-            cmd.ExecuteNonQuery();
+            _sqlExecutor.Execute(_connectionString, sql, parameters);
         }
     }
 }

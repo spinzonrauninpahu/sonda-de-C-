@@ -11,9 +11,4 @@ public static class Logger
         if (!Enabled) return;
         Console.WriteLine("[LOG] " + DateTime.Now + " - " + message);
     }
-
-    public static void Try(Action a)
-    {
-        try { a(); } catch { }
-    }
 }
