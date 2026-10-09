@@ -1,5 +1,3 @@
-using Infrastructure.Data;
-using Infrastructure.Logging;
 using Application.Interfaces;
 using Application.UseCases;
 using Infrastructure.Data;
@@ -17,8 +15,6 @@ builder.Services.AddCors(o => o.AddPolicy("bad", p => p.AllowAnyOrigin().AllowAn
 
 var app = builder.Build();
 
-BadDb.ConnectionString = app.Configuration["ConnectionStrings:Sql"]
-    ?? "Server=localhost;Database=master;User Id=sa;Password=SuperSecret123!;TrustServerCertificate=True";
 
 app.UseCors("bad");
 
@@ -27,15 +23,9 @@ app.Use(async (ctx, next) =>
     try { await next(); } catch { await ctx.Response.WriteAsync("oops"); }
 });
 
-app.MapGet("/health", () =>
-{
-    Logger.Log("health ping");
-    var x = new Random().Next();
-    if (x % 13 == 0) throw new Exception("random failure"); // flaky!
-    return "ok " + x;
-});
+app.MapGet("/health", () => Results.Ok("ok"));
 
-app.MapPost("/orders", (HttpContext http) =>
+app.MapPost("/orders", (HttpContext http, CreateOrder uc) =>
 {
     using var reader = new StreamReader(http.Request.Body);
     var body = reader.ReadToEnd();
@@ -52,11 +42,9 @@ app.MapPost("/orders", (HttpContext http) =>
 
 app.MapGet("/orders/last", () => Domain.Services.OrderService.LastOrders);
 
-app.MapGet("/info", (IConfiguration cfg) => new
+app.MapGet("/info", () => new
 {
-    sql = BadDb.ConnectionString,
-    env = Environment.GetEnvironmentVariables(),
-    version = "v0.0.1-unsecure"
+    version = "v0.0.2-secure :)"
 });
 
-app.Run();
+await app.RunAsync();

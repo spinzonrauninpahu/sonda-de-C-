@@ -6,11 +6,11 @@ using Application.Interfaces;
 using Domain.Entities;
 using Domain.Services;
 
-public class CreateOrderUseCase
+public class CreateOrder
 {
     private readonly IOrderRepository _orderRepository;
 
-    public CreateOrderUseCase (IOrderRepository orderRepository)
+    public CreateOrder (IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }
